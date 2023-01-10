@@ -1,9 +1,14 @@
 const express = require('express'),
 	dotenv = require('dotenv')
 
-dotenv.config({ path: './config.env' })
+const connectDB = require('./config/db')
+
+dotenv.config({ path: './config/config.env' })
 
 const app = express()
+
+// Connect to database
+connectDB()
 
 app.get('/', (req, res) => {
 	res.send('API running')
