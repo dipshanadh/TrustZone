@@ -10,10 +10,22 @@ const app = express()
 // Connect to database
 connectDB()
 
+// Router files
+const users = require('./routes/users'),
+	auth = require('./routes/auth'),
+	companies = require('./routes/companies'),
+	reviews = require('./routes/reviews')
+
+// Mount routes
+app.use('/api/users', users)
+app.use('/api/auth', auth)
+app.use('/api/companies', companies)
+app.use('/api/reviews', reviews)
+
 app.get('/', (req, res) => {
 	res.send('API running')
 })
 
 const PORT = process.env.PORT
 
-app.listen(PORT, () => `Server running on PORT ${PORT}`)
+app.listen(PORT, () => console.log(`Server running on PORT ${PORT}`))
