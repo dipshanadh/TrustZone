@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken")
 
-const User = require("../models/User")
+const { sendResponse } = require("../utils/sendResponse")
 
 module.exports = async (req, res, next) => {
 	let token
@@ -29,13 +29,8 @@ module.exports = async (req, res, next) => {
 
 		next()
 	} catch (err) {
-		res.status(401).json({
-			success: false,
-			errors: [
-				{
-					msg: "Token is not valid",
-				},
-			],
+		sendResponse(res, false, 401, {
+			msg: "Token is not valid",
 		})
 	}
 }
