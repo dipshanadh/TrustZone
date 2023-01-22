@@ -1,83 +1,45 @@
 const express = require("express")
-const { check, validationResult } = require("express-validator")
-const bcrypt = require("bcryptjs")
-const jwt = require("jsonwebtoken")
 
 const User = require("../models/User")
 
 const router = express.Router()
 
-// @route   POST api/users
-// @desc	Register user
+// @desc    Get a user
+// @route   GET /api/user/:id
 // @access  Public
-router.post(
-	"/",
-	[
-		check("name", "Name is required").not().isEmpty(),
-		check("email", "Please include a valid email").isEmail(),
-		check(
-			"password",
-			"Please enter a password with 6 or more passwords"
-		).isLength({ min: 6 }),
-	],
-	async (req, res) => {
-		const errors = validationResult(req)
+router.get("/:id", async (req, res) => {
+	const id = req.params.id
 
-		if (!errors.isEmpty())
-			return res.status(400).json({
-				success: false,
-				errors: errors.array(),
-			})
+	try {
+		const user = await User.findById(id)
 
-		try {
-			const { name, email, password } = req.body
-
-			const createdUser = await User.findOne({ email })
-
-			if (createdUser)
-				return res.status(400).json({
-					success: false,
-					errors: [
-						{
-							value: email,
-							msg: "User already exists with the email",
-							param: "email",
-							location: "body",
-						},
-					],
-				})
-
-			const user = new User({ name, email, password })
-
-			const salt = await bcrypt.genSalt(10)
-
-			user.password = await bcrypt.hash(password, salt)
-
-			await user.save()
-
-			const payload = { id: user.id }
-
-			const token = jwt.sign(payload, process.env.JWT_SECRET, {
-				expiresIn: process.env.JWT_EXPIRE,
-			})
-
-			res.status(201).json({
-				success: true,
-				token,
-			})
-		} catch (err) {
-			console.error(err.message)
-
-			res.status(500).json({
+		if (!user)
+			return res.status(500).json({
 				success: false,
 				errors: [
 					{
-						msg: "Something went wrong",
+						value: id,
+						msg: "Could not find the user",
+						param: "id",
+						location: "params",
 					},
 				],
 			})
-		}
+
+		res.status(200).json({
+			success: true,
+			data: user,
+		})
+	} catch (err) {
+		res.status(500).json({
+			success: false,
+			errors: [
+				{
+					msg: "Something went wrong",
+				},
+			],
+		})
 	}
-)
+})
 
 module.exports = router
