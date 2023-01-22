@@ -14,8 +14,8 @@ router
 	.post(
 		"/login",
 		[
-			check("email", "Please enter a valid email").isEmail(),
-			check("password", "Please enter a password").exists(),
+			check("email", "Include a valid email").isEmail(),
+			check("password", "Password is required").exists(),
 		],
 		login
 	)
@@ -23,10 +23,10 @@ router
 		"/register",
 		[
 			check("name", "Name is required").not().isEmpty(),
-			check("email", "Please include a valid email").isEmail(),
+			check("email", "Include a valid email").isEmail(),
 			check(
 				"password",
-				"Please enter a password with 6 or more passwords"
+				"Enter a password with 6 or more characters"
 			).isLength({ min: 6 }),
 		],
 		register

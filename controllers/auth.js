@@ -61,7 +61,7 @@ const login = asyncHandler(async (req, res) => {
 const register = asyncHandler(async (req, res) => {
 	const errors = validationResult(req)
 
-	if (!errors.isEmpty()) return sendResponse(res, false, 400, errors.array)
+	if (!errors.isEmpty()) return sendResponse(res, false, 400, errors.array())
 
 	const { name, email, password } = req.body
 
@@ -77,13 +77,14 @@ const register = asyncHandler(async (req, res) => {
 			},
 		])
 
-	const user = new User({ name, email, password })
-
 	const salt = await bcrypt.genSalt(10)
+	const encryptedPassword = await bcrypt.hash(password, salt)
 
-	user.password = await bcrypt.hash(password, salt)
-
-	await user.save()
+	const user = await User.create({
+		name,
+		email,
+		password: encryptedPassword,
+	})
 
 	const payload = { id: user.id }
 
