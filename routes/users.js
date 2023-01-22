@@ -41,6 +41,8 @@ router.post(
 						{
 							value: email,
 							msg: "User already exists with the email",
+							param: "email",
+							location: "body",
 						},
 					],
 				})
