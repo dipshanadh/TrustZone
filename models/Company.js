@@ -20,7 +20,7 @@ const CompanySchema = new mongoose.Schema({
 		required: true,
 	},
 	location: {
-		type: Sring,
+		type: String,
 		required: true,
 	},
 	email: {
