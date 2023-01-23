@@ -36,6 +36,7 @@ const CompanySchema = new mongoose.Schema({
 		type: Number,
 		min: 1,
 		max: 5,
+		default: 0,
 	},
 	photo: {
 		type: String,
