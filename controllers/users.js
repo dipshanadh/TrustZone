@@ -17,10 +17,7 @@ const getUser = asyncHandler(async (req, res) => {
 	if (!user)
 		return sendResponse(res, false, 500, [
 			{
-				value: id,
 				msg: "Could not find the user",
-				param: "id",
-				location: "params",
 			},
 		])
 
@@ -43,9 +40,7 @@ const getUserCompany = asyncHandler(async (req, res) => {
 	if (!company)
 		return sendResponse(res, false, 500, [
 			{
-				value: req.user.id,
 				msg: "The current user doesn't have any company",
-				param: "id",
 			},
 		])
 

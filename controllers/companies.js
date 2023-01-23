@@ -6,6 +6,22 @@ const Company = require("../models/Company")
 const asyncHandler = require("../utils/asyncHandler")
 const { sendResponse } = require("../utils/sendResponse")
 
+// @route	GET api/companies/:id
+// @desc	Get a company
+// @access	Public
+const getCompany = asyncHandler(async (req, res) => {
+	const company = await Company.findById(req.params.id)
+
+	if (!company)
+		return sendResponse(res, false, 404, [
+			{
+				msg: "The company doesn't exist",
+			},
+		])
+
+	sendResponse(res, true, 200, company)
+})
+
 // @route   GET api/companies
 // @desc    Get companies
 // @access  Public
@@ -83,4 +99,4 @@ const updateCompany = asyncHandler(async (req, res) => {
 	sendResponse(res, true, 201, company)
 })
 
-module.exports = { getCompanies, createCompany, updateCompany }
+module.exports = { getCompany, getCompanies, createCompany, updateCompany }

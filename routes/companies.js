@@ -6,6 +6,7 @@ const auth = require("../middlewares/auth")
 
 // controllers
 const {
+	getCompany,
 	getCompanies,
 	createCompany,
 	updateCompany,
@@ -29,6 +30,6 @@ router
 		createCompany
 	)
 
-router.route("/:id").put(auth, updateCompany)
+router.route("/:id").get(getCompany).put(auth, updateCompany)
 
 module.exports = router
