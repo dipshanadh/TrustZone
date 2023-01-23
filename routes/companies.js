@@ -10,6 +10,7 @@ const {
 	getCompanies,
 	createCompany,
 	updateCompany,
+	deleteCompany,
 } = require("../controllers/companies")
 
 const router = express.Router()
@@ -27,9 +28,13 @@ router
 			check("website", "Enter a valid URL").isURL(),
 			check("location", "Company location is required").notEmpty(),
 		],
-		createCompany
+		createCompany,
 	)
 
-router.route("/:id").get(getCompany).put(auth, updateCompany)
+router
+	.route("/:id")
+	.get(getCompany)
+	.put(auth, updateCompany)
+	.delete(auth, deleteCompany)
 
 module.exports = router

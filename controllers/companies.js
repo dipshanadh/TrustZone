@@ -14,9 +14,7 @@ const getCompany = asyncHandler(async (req, res) => {
 
 	if (!company)
 		return sendResponse(res, false, 404, [
-			{
-				msg: "The company doesn't exist",
-			},
+			{ msg: "Could not find the company" },
 		])
 
 	sendResponse(res, true, 200, company)
@@ -39,9 +37,7 @@ const createCompany = asyncHandler(async (req, res) => {
 
 	if (createdCompany)
 		return sendResponse(res, false, 400, [
-			{
-				msg: "A user can't create more than one company",
-			},
+			{ msg: "A user can't create more than one company" },
 		])
 
 	const erorrs = validationResult(req)
@@ -73,16 +69,12 @@ const updateCompany = asyncHandler(async (req, res) => {
 
 	if (!company)
 		return sendResponse(res, false, 404, [
-			{
-				msg: "The company doesn't exist",
-			},
+			{ msg: "Could not find the company" },
 		])
 
 	if (req.user.id !== company.user.toString())
 		return sendResponse(res, false, 400, [
-			{
-				msg: "Not authorized to access this route",
-			},
+			{ msg: "The company doesn't belong to the current user" },
 		])
 
 	const { name, description, website, location, email, phone } = req.body
@@ -99,4 +91,35 @@ const updateCompany = asyncHandler(async (req, res) => {
 	sendResponse(res, true, 201, company)
 })
 
-module.exports = { getCompany, getCompanies, createCompany, updateCompany }
+// @route   DELETE api/companies
+// @desc    Delete a company
+// @access  Private
+const deleteCompany = asyncHandler(async (req, res) => {
+	// !TODO - Remove the company's reviews
+
+	const { id } = req.params
+
+	const company = await Company.findById(id)
+
+	if (!company)
+		return sendResponse(res, false, 404, [
+			{ msg: "Could not find the company" },
+		])
+
+	if (req.user.id !== company.user.toString())
+		return sendResponse(res, false, 400, [
+			{ msg: "The company doesn't belong to the current user" },
+		])
+
+	await company.delete()
+
+	sendResponse(res, true, 201, {})
+})
+
+module.exports = {
+	getCompany,
+	getCompanies,
+	createCompany,
+	updateCompany,
+	deleteCompany,
+}
