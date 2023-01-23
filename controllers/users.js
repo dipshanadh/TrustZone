@@ -1,6 +1,8 @@
+// Schemas
 const User = require("../models/User")
+const Company = require("../models/Company")
 
-// utils
+// Utils
 const asyncHandler = require("../utils/asyncHandler")
 const { sendResponse } = require("../utils/sendResponse")
 
@@ -25,4 +27,29 @@ const getUser = asyncHandler(async (req, res) => {
 	sendResponse(res, true, 200, user)
 })
 
-module.exports = { getUser }
+// @route   GET api/user/:id/companies
+// @desc    Get current user's company
+// @access  Private
+const getUserCompany = asyncHandler(async (req, res) => {
+	if (req.user.id !== req.params.id)
+		return sendResponse(res, false, 500, [
+			{
+				msg: "Not authorized to access this route",
+			},
+		])
+
+	const company = await Company.findOne({ user: req.user.id })
+
+	if (!company)
+		return sendResponse(res, false, 500, [
+			{
+				value: req.user.id,
+				msg: "The current user doesn't have any company",
+				param: "id",
+			},
+		])
+
+	sendResponse(res, true, 200, company)
+})
+
+module.exports = { getUser, getUserCompany }
