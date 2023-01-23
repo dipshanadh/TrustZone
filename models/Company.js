@@ -30,7 +30,7 @@ const CompanySchema = new mongoose.Schema({
 	phone: {
 		type: String,
 		required: true,
-		maxlength: 20,
+		maxlength: 15,
 	},
 	averageRating: {
 		type: Number,
