@@ -7,37 +7,19 @@ const asyncHandler = require("../utils/asyncHandler")
 const { sendResponse } = require("../utils/sendResponse")
 
 // @route   GET api/companies
-// @desc    Get current user's company
-// @access  Private
-const getUserCompany = asyncHandler(async (req, res) => {
-	if (req.user.id !== req.params.id)
-		return sendResponse(res, false, 500, [
-			{
-				value: req.user.id,
-				msg: "Not authorized to access this route",
-				param: "id",
-			},
-		])
+// @desc    Get companies
+// @access  Public
+const getCompanies = asyncHandler(async (req, res) => {
+	const companies = await Company.find()
 
-	const company = await Company.findOne({ user: req.user.id })
-
-	if (!company)
-		return sendResponse(res, false, 500, [
-			{
-				value: req.user.id,
-				msg: "There is no company for the current user",
-				param: "id",
-			},
-		])
-
-	sendResponse(res, true, 200, company)
+	sendResponse(res, true, 200, companies)
 })
 
 // @route   POST api/companies
 // @desc    Create a company
 // @access  Private
 const createCompany = asyncHandler(async (req, res) => {
-	const createdCompany = Company.findOne({ user: req.user.id })
+	const createdCompany = await Company.findOne({ user: req.user.id })
 
 	if (createdCompany)
 		return sendResponse(res, false, 400, [
@@ -65,4 +47,40 @@ const createCompany = asyncHandler(async (req, res) => {
 	sendResponse(res, true, 201, company)
 })
 
-module.exports = { getUserCompany, createCompany }
+// @route   PUT api/companies
+// @desc    Update a company
+// @access  Private
+const updateCompany = asyncHandler(async (req, res) => {
+	const { id } = req.params
+
+	const company = await Company.findById(id)
+
+	if (!company)
+		return sendResponse(res, false, 404, [
+			{
+				msg: "The company doesn't exist",
+			},
+		])
+
+	if (req.user.id !== company.user.toString())
+		return sendResponse(res, false, 400, [
+			{
+				msg: "Not authorized to access this route",
+			},
+		])
+
+	const { name, description, website, location, email, phone } = req.body
+
+	if (name) company.name = name
+	if (description) company.description = description
+	if (website) company.website = website
+	if (location) company.location = location
+	if (email) company.email = email
+	if (phone) company.phone = phone
+
+	await company.save()
+
+	sendResponse(res, true, 201, company)
+})
+
+module.exports = { getCompanies, createCompany, updateCompany }

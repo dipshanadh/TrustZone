@@ -5,13 +5,17 @@ const { check } = require("express-validator")
 const auth = require("../middlewares/auth")
 
 // controllers
-const { getUserCompany, createCompany } = require("../controllers/companies")
+const {
+	getCompanies,
+	createCompany,
+	updateCompany,
+} = require("../controllers/companies")
 
-const router = express.Router({ mergeParams: true })
+const router = express.Router()
 
 router
 	.route("/")
-	.get(auth, getUserCompany)
+	.get(getCompanies)
 	.post(
 		[
 			auth,
@@ -24,5 +28,7 @@ router
 		],
 		createCompany
 	)
+
+router.route("/:id").put(auth, updateCompany)
 
 module.exports = router
