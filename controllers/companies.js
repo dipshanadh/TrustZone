@@ -33,16 +33,16 @@ const getCompanies = asyncHandler(async (req, res) => {
 // @desc    Create a company
 // @access  Private
 const createCompany = asyncHandler(async (req, res) => {
+	const erorrs = validationResult(req)
+
+	if (!erorrs.isEmpty()) return sendResponse(res, false, 400, erorrs.array())
+
 	const createdCompany = await Company.findOne({ user: req.user.id })
 
 	if (createdCompany)
 		return sendResponse(res, false, 400, [
 			{ msg: "A user can't create more than one company" },
 		])
-
-	const erorrs = validationResult(req)
-
-	if (!erorrs.isEmpty()) return sendResponse(res, false, 400, erorrs.array())
 
 	const { name, description, website, location, email, phone } = req.body
 
@@ -63,6 +63,10 @@ const createCompany = asyncHandler(async (req, res) => {
 // @desc    Update a company
 // @access  Private
 const updateCompany = asyncHandler(async (req, res) => {
+	const erorrs = validationResult(req)
+
+	if (!erorrs.isEmpty()) return sendResponse(res, false, 400, erorrs.array())
+
 	const { id } = req.params
 
 	const company = await Company.findById(id)
