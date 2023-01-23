@@ -11,7 +11,7 @@ const sendToken = (res, payload) => {
 		expiresIn: process.env.JWT_EXPIRE,
 	})
 
-	res.status(201).json({
+	res.status(200).json({
 		success: true,
 		token,
 	})
