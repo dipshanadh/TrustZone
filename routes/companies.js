@@ -44,7 +44,6 @@ router
 		],
 		createCompany,
 	)
-
 router
 	.route("/:id")
 	.get(getCompany)

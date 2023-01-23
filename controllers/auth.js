@@ -5,6 +5,7 @@ const User = require("../models/User")
 
 // utils
 const asyncHandler = require("../utils/asyncHandler")
+const checkValidationErrors = require("../utils/checkValidationErrors")
 const { sendResponse, sendToken } = require("../utils/sendResponse")
 
 // @desc    Get auth user
@@ -20,9 +21,7 @@ const getAuthUser = asyncHandler(async (req, res) => {
 // @route   POST api/auth/login
 // @access  Public
 const login = asyncHandler(async (req, res) => {
-	const errors = validationResult(req)
-
-	if (!errors.isEmpty()) return sendResponse(res, false, 400, errors.array())
+	if (checkValidationErrors(req, res)) return
 
 	const { email, password } = req.body
 
@@ -59,9 +58,7 @@ const login = asyncHandler(async (req, res) => {
 // @route   POST api/auth/register
 // @access  Public
 const register = asyncHandler(async (req, res) => {
-	const errors = validationResult(req)
-
-	if (!errors.isEmpty()) return sendResponse(res, false, 400, errors.array())
+	if (checkValidationErrors(req, res)) return
 
 	const { name, email, password } = req.body
 

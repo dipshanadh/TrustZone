@@ -1,15 +1,16 @@
-const { validationResult } = require("express-validator")
-
 const Company = require("../models/Company")
 
 // utils
 const asyncHandler = require("../utils/asyncHandler")
+const checkValidationErrors = require("../utils/checkValidationErrors")
 const { sendResponse } = require("../utils/sendResponse")
 
 // @route	GET api/companies/:id
 // @desc	Get a company
 // @access	Public
 const getCompany = asyncHandler(async (req, res) => {
+	if (checkValidationErrors(req, res)) return
+
 	const company = await Company.findById(req.params.id)
 
 	if (!company)
@@ -33,9 +34,7 @@ const getCompanies = asyncHandler(async (req, res) => {
 // @desc    Create a company
 // @access  Private
 const createCompany = asyncHandler(async (req, res) => {
-	const erorrs = validationResult(req)
-
-	if (!erorrs.isEmpty()) return sendResponse(res, false, 400, erorrs.array())
+	if (checkValidationErrors(req, res)) return
 
 	const createdCompany = await Company.findOne({ user: req.user.id })
 
@@ -63,9 +62,7 @@ const createCompany = asyncHandler(async (req, res) => {
 // @desc    Update a company
 // @access  Private
 const updateCompany = asyncHandler(async (req, res) => {
-	const erorrs = validationResult(req)
-
-	if (!erorrs.isEmpty()) return sendResponse(res, false, 400, erorrs.array())
+	if (checkValidationErrors(req, res)) return
 
 	const { id } = req.params
 
@@ -99,6 +96,8 @@ const updateCompany = asyncHandler(async (req, res) => {
 // @desc    Delete a company
 // @access  Private
 const deleteCompany = asyncHandler(async (req, res) => {
+	if (checkValidationErrors(req, res)) return
+
 	// !TODO - Remove the company's reviews
 
 	const { id } = req.params

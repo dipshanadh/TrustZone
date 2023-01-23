@@ -15,21 +15,21 @@ router
 		"/login",
 		[
 			check("email", "Include a valid email").isEmail(),
-			check("password", "Password is required").exists(),
+			check("password", "Password is required").notEmpty(),
 		],
-		login
+		login,
 	)
 	.post(
 		"/register",
 		[
-			check("name", "Name is required").not().isEmpty(),
+			check("name", "Name is required").notEmpty(),
 			check("email", "Include a valid email").isEmail(),
 			check(
 				"password",
-				"Enter a password with 6 or more characters"
+				"Enter a password with 6 or more characters",
 			).isLength({ min: 6 }),
 		],
-		register
+		register,
 	)
 
 module.exports = router
