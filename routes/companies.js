@@ -63,15 +63,15 @@ router
 				"Company description can not be more than 500 characters",
 			).isLength({ max: 500 }),
 			check("email")
-				.if(value => (value.length > 0 ? true : false))
+				.optional()
 				.isEmail()
 				.withMessage("Enter a valid email"),
 			check("phone")
-				.if(value => (value.length > 0 ? true : false))
+				.optional()
 				.isMobilePhone("ne-NP")
 				.withMessage("Enter a valid phone number"),
 			check("website")
-				.if(value => (value.length > 0 ? true : false))
+				.optional()
 				.isURL()
 				.withMessage("Enter a valid URL"),
 		],
