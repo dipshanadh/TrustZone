@@ -1,12 +1,10 @@
-const express = require('express')
+const express = require("express")
 
-const router = express.Router()
+// controllers
+const { getReviews } = require("../controllers/reviews")
 
-// @route   api/reviews
-// @desc    Test route
-// @access  Public
-router.get('/', (req, res) => {
-	res.send('Reviews route')
-})
+const router = express.Router({ mergeParams: true })
+
+router.route("/").get(getReviews)
 
 module.exports = router

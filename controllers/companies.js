@@ -9,8 +9,6 @@ const { sendResponse } = require("../utils/sendResponse")
 // @desc	Get a company
 // @access	Public
 const getCompany = asyncHandler(async (req, res) => {
-	if (checkValidationErrors(req, res)) return
-
 	const company = await Company.findById(req.params.id)
 
 	if (!company)

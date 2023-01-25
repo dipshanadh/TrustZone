@@ -13,6 +13,9 @@ const {
 	deleteCompany,
 } = require("../controllers/companies")
 
+// Other routers
+const reviewRouter = require("./reviews")
+
 const router = express.Router()
 
 router
@@ -44,6 +47,7 @@ router
 		],
 		createCompany,
 	)
+
 router
 	.route("/:id")
 	.get(getCompany)
@@ -74,5 +78,7 @@ router
 		updateCompany,
 	)
 	.delete(auth, deleteCompany)
+
+router.use("/:id/reviews", reviewRouter)
 
 module.exports = router
