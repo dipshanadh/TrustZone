@@ -29,6 +29,13 @@ module.exports = async (req, res, next) => {
 
 		next()
 	} catch (err) {
+		console.log(err.name)
+
+		if (err.name == "TokenExpiredError")
+			sendResponse(res, false, 401, {
+				msg: "Your session has expired. Please login again",
+			})
+
 		sendResponse(res, false, 401, {
 			msg: "Token is not valid",
 		})
