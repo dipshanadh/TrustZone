@@ -59,5 +59,36 @@ const createReview = asyncHandler(async (req, res) => {
 
 	sendResponse(res, true, 201, review)
 })
+// @route   PUT api/companies/:id/reviews
+// @desc    Update a review
+// @access  Private
+const updateReview = asyncHandler(async (req, res) => {
+	if (checkValidationErrors(req, res)) return
 
-module.exports = { getReviews, createReview }
+	const review = await Reviews.findOne({
+		_id: req.params.reviewID,
+		company: req.params.id,
+	})
+
+	if (!review)
+		return sendResponse(res, false, 400, [
+			{ msg: "Could not find the review" },
+		])
+
+	if (req.user.id !== review.user.toString())
+		return sendResponse(res, false, 400, [
+			{ msg: "The review doesn't belong to the current user" },
+		])
+
+	const { title, text, rating } = req.body
+
+	if (title) review.title = title
+	if (text) review.text = text
+	if (rating) review.rating = rating
+
+	await review.save()
+
+	sendResponse(res, true, 200, review)
+})
+
+module.exports = { getReviews, createReview, updateReview }
