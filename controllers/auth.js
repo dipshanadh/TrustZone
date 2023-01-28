@@ -14,6 +14,13 @@ const { sendResponse, sendToken } = require("../utils/sendResponse")
 const getAuthUser = asyncHandler(async (req, res) => {
 	const user = await User.findById(req.user.id)
 
+	if (!user)
+		return sendResponse(res, false, 404, [
+			{
+				message: "Could not find the user",
+			},
+		])
+
 	sendResponse(res, true, 200, user)
 })
 
@@ -30,10 +37,7 @@ const login = asyncHandler(async (req, res) => {
 	if (!user)
 		return sendResponse(res, false, 400, [
 			{
-				value: email,
 				msg: "No user found with the email",
-				param: "email",
-				location: "body",
 			},
 		])
 
@@ -42,10 +46,7 @@ const login = asyncHandler(async (req, res) => {
 	if (!isMatched)
 		return sendResponse(res, false, 400, [
 			{
-				value: password,
 				msg: "Incorrect password",
-				param: "password",
-				location: "body",
 			},
 		])
 
@@ -67,10 +68,7 @@ const register = asyncHandler(async (req, res) => {
 	if (createdUser)
 		return sendResponse(res, false, 400, [
 			{
-				value: email,
 				msg: "User already exists with the email",
-				param: "email",
-				location: "body",
 			},
 		])
 
