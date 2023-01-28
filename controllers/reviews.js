@@ -166,10 +166,54 @@ const likeReview = asyncHandler(async (req, res) => {
 			.length > 0
 	)
 		return sendResponse(res, false, 400, [
-			{ msg: "A user can't like a review more than once" },
+			{ msg: "Review has already been liked" },
 		])
 
 	review.likes.unshift({ user: req.user.id })
+
+	await review.save()
+
+	sendResponse(res, true, 201, review.likes)
+})
+
+// @route   PUT api/companies/:id/reviews/:reviewID/unlike
+// @desc    Unlike a review
+// @access  Private
+const unlikeReview = asyncHandler(async (req, res) => {
+	if (checkValidationErrors(req, res)) return
+
+	const companyID = req.params.id
+
+	const company = await Company.findById(companyID)
+
+	if (!company)
+		return sendResponse(res, false, 404, [
+			{ msg: "Could not find the company" },
+		])
+
+	const review = await Reviews.findOne({
+		_id: req.params.reviewID,
+		company: companyID,
+	})
+
+	if (!review)
+		return sendResponse(res, false, 404, [
+			{ msg: "Could not find the review" },
+		])
+
+	if (
+		review.likes.filter(like => like.user.toString() === req.user.id)
+			.length === 0
+	)
+		return sendResponse(res, false, 400, [
+			{ msg: "Review has not yet been liked" },
+		])
+
+	const removeIndex = review.likes
+		.map(likes => likes.user.toString())
+		.indexOf(req.user.id)
+
+	review.likes.splice(removeIndex, 1)
 
 	await review.save()
 
@@ -182,4 +226,5 @@ module.exports = {
 	updateReview,
 	deleteReview,
 	likeReview,
+	unlikeReview,
 }

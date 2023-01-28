@@ -11,6 +11,7 @@ const {
 	updateReview,
 	deleteReview,
 	likeReview,
+	unlikeReview,
 } = require("../controllers/reviews")
 
 const router = express.Router({ mergeParams: true })
@@ -66,5 +67,6 @@ router
 	.delete(auth, deleteReview)
 
 router.put("/:reviewID/like", auth, likeReview)
+router.put("/:reviewID/unlike", auth, unlikeReview)
 
 module.exports = router
