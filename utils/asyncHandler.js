@@ -2,7 +2,7 @@ const { sendResponse } = require("./sendResponse")
 
 const asyncHandler = fn => (req, res) => {
 	fn(req, res).catch(err => {
-		console.error(err.message)
+		console.error(err.stack)
 
 		sendResponse(res, false, 500, [
 			{
