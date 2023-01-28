@@ -9,6 +9,7 @@ const {
 	getReviews,
 	createReview,
 	updateReview,
+	deleteReview,
 } = require("../controllers/reviews")
 
 const router = express.Router({ mergeParams: true })
@@ -61,5 +62,6 @@ router
 		],
 		updateReview,
 	)
+	.delete(auth, deleteReview)
 
 module.exports = router
