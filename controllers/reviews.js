@@ -30,7 +30,7 @@ const createReview = asyncHandler(async (req, res) => {
 
 	const companyID = req.params.id
 
-	const company = await Company.findOne({ user: req.user.id })
+	const company = await Company.findById(companyID)
 
 	if (!company)
 		return sendResponse(res, false, 404, [
@@ -66,6 +66,15 @@ const createReview = asyncHandler(async (req, res) => {
 const updateReview = asyncHandler(async (req, res) => {
 	if (checkValidationErrors(req, res)) return
 
+	const companyID = req.params.id
+
+	const company = await Company.findById(companyID)
+
+	if (!company)
+		return sendResponse(res, false, 404, [
+			{ msg: "Could not find the company" },
+		])
+
 	const review = await Reviews.findOne({
 		_id: req.params.reviewID,
 		company: req.params.id,
@@ -98,9 +107,18 @@ const updateReview = asyncHandler(async (req, res) => {
 const deleteReview = asyncHandler(async (req, res) => {
 	if (checkValidationErrors(req, res)) return
 
+	const companyID = req.params.id
+
+	const company = await Company.findById(companyID)
+
+	if (!company)
+		return sendResponse(res, false, 404, [
+			{ msg: "Could not find the company" },
+		])
+
 	const review = await Reviews.findOne({
 		_id: req.params.reviewID,
-		company: req.params.id,
+		company: companyID,
 	})
 
 	if (!review)
@@ -118,4 +136,50 @@ const deleteReview = asyncHandler(async (req, res) => {
 	sendResponse(res, true, 201, {})
 })
 
-module.exports = { getReviews, createReview, updateReview, deleteReview }
+// @route   PUT api/companies/:id/reviews/:reviewID/like
+// @desc    Like a review
+// @access  Private
+const likeReview = asyncHandler(async (req, res) => {
+	if (checkValidationErrors(req, res)) return
+
+	const companyID = req.params.id
+
+	const company = await Company.findById(companyID)
+
+	if (!company)
+		return sendResponse(res, false, 404, [
+			{ msg: "Could not find the company" },
+		])
+
+	const review = await Reviews.findOne({
+		_id: req.params.reviewID,
+		company: companyID,
+	})
+
+	if (!review)
+		return sendResponse(res, false, 404, [
+			{ msg: "Could not find the review" },
+		])
+
+	if (
+		review.likes.filter(like => like.user.toString() === req.user.id)
+			.length > 0
+	)
+		return sendResponse(res, false, 400, [
+			{ msg: "A user can't like a review more than once" },
+		])
+
+	review.likes.unshift({ user: req.user.id })
+
+	await review.save()
+
+	sendResponse(res, true, 201, review.likes)
+})
+
+module.exports = {
+	getReviews,
+	createReview,
+	updateReview,
+	deleteReview,
+	likeReview,
+}

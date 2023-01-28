@@ -10,6 +10,7 @@ const {
 	createReview,
 	updateReview,
 	deleteReview,
+	likeReview,
 } = require("../controllers/reviews")
 
 const router = express.Router({ mergeParams: true })
@@ -20,7 +21,7 @@ router
 	.post(
 		[
 			auth,
-			check("name")
+			check("title")
 				.notEmpty()
 				.withMessage("Review title is required")
 				.isLength({ max: 50 })
@@ -63,5 +64,7 @@ router
 		updateReview,
 	)
 	.delete(auth, deleteReview)
+
+router.put("/:reviewID/like", auth, likeReview)
 
 module.exports = router
